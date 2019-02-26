@@ -216,6 +216,8 @@ class WarMachine {
 
 			}
 		}
+
+		this.players.forEach(player => shuffle(player.cards));
 	}
 
 	playRound() {
@@ -335,6 +337,29 @@ function playGame(deck, players) {
 	return names;
 }
 
+function printStats(stats) {
+	let keys = Object.keys(stats);
+	keys = keys.sort((a,b) => stats[b] - stats[a]);
+	const output = keys.map(key => `${key}\t${stats[key]}`)
+	console.log(output.join("\t"));
+}
+
+function runMatches(deckFunc, playerStats, numRuns = 1000) {
+	let stats = {};
+	for (var i = 0; i < numRuns; i++) {
+		let players = playerStats.map( stat => new PlayerDeck([], stat, stat.name));
+		shuffle(players);
+		let names = playGame(deckFunc(), players);
+
+		names.forEach (name => {
+			stats[name] = (stats[name] || 0) + 1;
+		})
+	}
+
+	printStats(stats);
+
+}
+
 let twoCard = new Card(cardValues.two, 0);
 let aceCard = new Card(cardValues.ace, 0);
 let kingCard = new Card(cardValues.king, 0);
@@ -348,22 +373,14 @@ console.log(WarMachine.determineWinner([twoCard, aceCard]) == 0); // expect 0
 // Stamina - ?
 // intelligence - Limits the face cards strong characters can steal.
 
-let warriorStats = {strength : 2, agility: 1, stamina: 0, intelligence: 0};
-let wizardStats = {strength : 0, agility: 2, stamina: 0, intelligence: 3};
-let thiefStats = {strength : 0, agility: 3, stamina: 0, intelligence: 1};
+let warriorStats = {name: "Warrior", strength : 3, agility: 1, stamina: 0, intelligence: 0};
+let wizardStats = {name: "Wizard", strength : 0, agility: 2, stamina: 0, intelligence: 3};
+let thiefStats = {name: "Thief", strength : 1, agility: 3, stamina: 0, intelligence: 1};
 
 let stats = {};
 
-for (var i = 0; i < 1000; i++) {
-	let warrior = new PlayerDeck([],warriorStats, "Warrior");
-	let wizard = new PlayerDeck([],wizardStats, "Wizard");
-	let thief = new PlayerDeck([],thiefStats, "Thief");
-	let names = playGame(makeDeck(), [warrior, wizard]);
-
-	names.forEach (name => {
-		stats[name] = (stats[name] || 0) + 1;
-	})
-}
-
-console.log(stats);
+runMatches(makeDeck, [warriorStats, wizardStats]);
+runMatches(makeDeck, [warriorStats, thiefStats]);
+runMatches(makeDeck, [wizardStats, thiefStats]);
+runMatches(makeDeck, [warriorStats, wizardStats, thiefStats]);
 
