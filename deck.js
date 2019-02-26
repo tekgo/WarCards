@@ -23,16 +23,12 @@ const aceBeatsAll = false;
 const doSwap = true;
 const warCardCount = 2;
 
-/**
- * Shuffles array in place. ES6 version
- * @param {Array} a items An array containing the items.
- */
-function shuffle(a) {
-    for (let i = a.length - 1; i > 0; i--) {
+// https://stackoverflow.com/questions/2450954/how-to-randomize-shuffle-a-javascript-array
+function shuffle(array) {
+   for (let i = array.length - 1; i >= 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
+        [array[i], array[j]] = [array[j], array[i]];
     }
-    return a;
 }
 
 class Card {
@@ -375,9 +371,9 @@ console.log(WarMachine.determineWinner([twoCard, aceCard]) == 0); // expect 0
 // Stamina - ?
 // intelligence - Limits the face cards strong characters can steal.
 
-let high = 4;
+let high = 3;
 let mid = 2;
-let low = 0;
+let low = 1;
 
 let warriorStats = {name: "Warrior", strength : high, agility: low, stamina: 0, intelligence: low};
 let wizardStats = {name: "Wizard", strength : low, agility: low, stamina: 0, intelligence: high};
