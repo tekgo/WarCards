@@ -21,6 +21,7 @@ const shuffleWinnersPile = true;
 const lastCardPlayedFaceUp = true;
 const aceBeatsAll = false;
 const doSwap = true;
+const warCardCount = 2;
 
 /**
  * Shuffles array in place. ES6 version
@@ -245,16 +246,17 @@ class WarMachine {
 				let playerCard = player.playCard() || jokerCard;
 				currentCards[i] = playerCard;
 				pile.push(playerCard);
-				playerCard = player.playCard();
+				for (let j=0; j < (warCardCount - 1); j++) {
+					playerCard = player.playCard();
+					// If the player doesn't have a card and lastCardPlayedFaceUp is false, use a joker as a placeholder
+					if (!lastCardPlayedFaceUp) {
+						playerCard = playerCard || jokerCard;
+					}
 
-				// If the player doesn't have a card and lastCardPlayedFaceUp is false, use a joker as a placeholder
-				if (!lastCardPlayedFaceUp) {
-					playerCard = playerCard || jokerCard;
-				}
-
-				if (playerCard || !lastCardPlayedFaceUp) {
-					currentCards[i] = playerCard;
-					pile.push(playerCard);
+					if (playerCard || !lastCardPlayedFaceUp) {
+						currentCards[i] = playerCard;
+						pile.push(playerCard);
+					}
 				}
 			}
 
@@ -373,9 +375,13 @@ console.log(WarMachine.determineWinner([twoCard, aceCard]) == 0); // expect 0
 // Stamina - ?
 // intelligence - Limits the face cards strong characters can steal.
 
-let warriorStats = {name: "Warrior", strength : 3, agility: 1, stamina: 0, intelligence: 0};
-let wizardStats = {name: "Wizard", strength : 0, agility: 2, stamina: 0, intelligence: 3};
-let thiefStats = {name: "Thief", strength : 1, agility: 3, stamina: 0, intelligence: 1};
+let high = 4;
+let mid = 2;
+let low = 0;
+
+let warriorStats = {name: "Warrior", strength : high, agility: low, stamina: 0, intelligence: low};
+let wizardStats = {name: "Wizard", strength : low, agility: low, stamina: 0, intelligence: high};
+let thiefStats = {name: "Thief", strength : mid, agility: high, stamina: 0, intelligence: mid};
 
 let stats = {};
 
